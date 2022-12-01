@@ -99,7 +99,7 @@
 			]
 		},
 		{
-			"label": "Check license",
+			"label": "Check licenses",
 			"type": "shell",
 			"windows": {
 				"command": "ubuntu2204.exe -c 'reuse lint'",
