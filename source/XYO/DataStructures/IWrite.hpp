@@ -1,0 +1,27 @@
+//
+// Data Structures
+//
+// Copyright (c) Grigore Stefan <g_stefan@yahoo.com>
+// Created by Grigore Stefan <g_stefan@yahoo.com>
+//
+// MIT License (MIT) <http://opensource.org/licenses/MIT>
+//
+
+#ifndef XYO_DATASTRUCTURES_IWRITE_HPP
+#define XYO_DATASTRUCTURES_IWRITE_HPP
+
+#ifndef XYO_DATASTRUCTURES_DEPENDENCY_HPP
+#	include <XYO/DataStructures/Dependency.hpp>
+#endif
+
+namespace XYO::DataStructures {
+
+	class IWrite : public virtual Object {
+			XYO_INTERFACE(IWrite);
+
+		public:
+			virtual size_t write(const void *input, size_t length) = 0;
+	};
+};
+
+#endif
