@@ -16,7 +16,6 @@ namespace XYO::DataStructures::Copyright {
 	XYO_DATASTRUCTURES_EXPORT const char *publisher();
 	XYO_DATASTRUCTURES_EXPORT const char *company();
 	XYO_DATASTRUCTURES_EXPORT const char *contact();
-	XYO_DATASTRUCTURES_EXPORT const char *fullCopyright();
 };
 
 #endif
