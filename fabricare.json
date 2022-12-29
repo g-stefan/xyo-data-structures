@@ -10,6 +10,8 @@
 		],
 		"dependency" : [
 			"xyo-managed-memory"
-		]
+		],
+		"hasRelease" : true,
+		"githubRelease" : true
 	}
 }
