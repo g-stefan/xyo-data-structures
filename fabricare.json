@@ -1,17 +1,21 @@
 {
-	"project": {
-		"name":"xyo-data-structures",
-		"type":"xyo-cpp",
-		"make" : "lib-and-dll",
-		"SPDX-License-Identifier": "MIT",
-		"sourcePath" : "XYO/DataStructures",
-		"testSource" : [
-			"test.01"
+	"solution": {
+		"name" : "xyo-data-structures",
+		"type" : "xyo-cpp",
+		"projects": [
+			{
+				"name" : "xyo-data-structures",
+				"make" : "lib-and-dll",
+				"SPDX-License-Identifier": "MIT",
+				"sourcePath" : "XYO/DataStructures",
+				"testSource" : [
+					"test.01"
+				],
+				"dependency" : [
+					"xyo-managed-memory"
+				]
+			}
 		],
-		"dependency" : [
-			"xyo-managed-memory"
-		],
-		"hasRelease" : true,
-		"githubRelease" : true
+		"hasGithub" : true
 	}
 }
