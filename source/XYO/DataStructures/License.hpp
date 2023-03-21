@@ -13,8 +13,8 @@
 
 namespace XYO::DataStructures::License {
 
-	XYO_DATASTRUCTURES_EXPORT const char *license();
-	XYO_DATASTRUCTURES_EXPORT const char *shortLicense();
+	XYO_DATASTRUCTURES_EXPORT std::string license();
+	XYO_DATASTRUCTURES_EXPORT std::string shortLicense();
 
 };
 

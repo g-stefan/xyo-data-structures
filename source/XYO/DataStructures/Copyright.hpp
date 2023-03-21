@@ -12,10 +12,10 @@
 #endif
 
 namespace XYO::DataStructures::Copyright {
-	XYO_DATASTRUCTURES_EXPORT const char *copyright();
-	XYO_DATASTRUCTURES_EXPORT const char *publisher();
-	XYO_DATASTRUCTURES_EXPORT const char *company();
-	XYO_DATASTRUCTURES_EXPORT const char *contact();
+	XYO_DATASTRUCTURES_EXPORT std::string copyright();
+	XYO_DATASTRUCTURES_EXPORT std::string publisher();
+	XYO_DATASTRUCTURES_EXPORT std::string company();
+	XYO_DATASTRUCTURES_EXPORT std::string contact();
 };
 
 #endif
