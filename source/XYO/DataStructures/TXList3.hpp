@@ -7,17 +7,11 @@
 #ifndef XYO_DATASTRUCTURES_TXLIST3_HPP
 #define XYO_DATASTRUCTURES_TXLIST3_HPP
 
-#ifndef XYO_DATASTRUCTURES_DEPENDENCY_HPP
-#	include <XYO/DataStructures/Dependency.hpp>
+#ifndef XYO_DATASTRUCTURES_TXLIST3NODE_HPP
+#	include <XYO/DataStructures/TXList3Node.hpp>
 #endif
 
 namespace XYO::DataStructures {
-
-	template <typename TNode>
-	struct TXList3Node {
-			TNode *back;
-			TNode *next;
-	};
 
 	template <typename TNode, template <typename U> class TNodeMemory = TMemorySystem>
 	struct TXList3 {

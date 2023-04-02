@@ -7,18 +7,11 @@
 #ifndef XYO_DATASTRUCTURES_TXARRAY_HPP
 #define XYO_DATASTRUCTURES_TXARRAY_HPP
 
-#ifndef XYO_DATASTRUCTURES_DEPENDENCY_HPP
-#	include <XYO/DataStructures/Dependency.hpp>
+#ifndef XYO_DATASTRUCTURES_TXARRAYT_HPP
+#	include <XYO/DataStructures/TXArrayT.hpp>
 #endif
 
 namespace XYO::DataStructures {
-
-	template <typename T>
-	struct TXArrayT {
-			size_t size;
-			size_t length;
-			T *root;
-	};
 
 	template <typename T>
 	struct TXArray {

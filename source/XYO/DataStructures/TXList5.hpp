@@ -7,20 +7,11 @@
 #ifndef XYO_DATASTRUCTURES_TXLIST5_HPP
 #define XYO_DATASTRUCTURES_TXLIST5_HPP
 
-#ifndef XYO_DATASTRUCTURES_DEPENDENCY_HPP
-#	include <XYO/DataStructures/Dependency.hpp>
+#ifndef XYO_DATASTRUCTURES_TXLIST5NODE_HPP
+#	include <XYO/DataStructures/TXList5Node.hpp>
 #endif
 
 namespace XYO::DataStructures {
-
-	template <typename TNode>
-	struct TXList5Node {
-			TNode *back;
-			TNode *next;
-			TNode *childHead;
-			TNode *childTail;
-			TNode *parent;
-	};
 
 	template <typename TNode, template <typename U> class TNodeMemory = TMemorySystem>
 	struct TXList5 {

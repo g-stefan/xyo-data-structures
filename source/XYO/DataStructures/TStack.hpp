@@ -7,26 +7,11 @@
 #ifndef XYO_DATASTRUCTURES_TSTACK_HPP
 #define XYO_DATASTRUCTURES_TSTACK_HPP
 
-#ifndef XYO_DATASTRUCTURES_DEPENDENCY_HPP
-#	include <XYO/DataStructures/Dependency.hpp>
+#ifndef XYO_DATASTRUCTURES_TSTACKNODE_HPP
+#	include <XYO/DataStructures/TStackNode.hpp>
 #endif
 
 namespace XYO::DataStructures {
-
-	template <typename T>
-	struct TStackNode : TXList1Node<TStackNode<T>> {
-			typedef TStackNode TNode;
-
-			T value;
-
-			inline void activeConstructor() {
-				TIfHasActiveConstructor<T>::activeConstructor(&value);
-			};
-
-			inline void activeDestructor() {
-				TIfHasActiveDestructor<T>::activeDestructor(&value);
-			};
-	};
 
 	template <typename T, template <typename U> class TNodeMemory = TMemory>
 	class TStack : public Object {

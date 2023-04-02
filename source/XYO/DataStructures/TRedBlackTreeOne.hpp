@@ -7,41 +7,11 @@
 #ifndef XYO_DATASTRUCTURES_TREDBLACKTREEONE_HPP
 #define XYO_DATASTRUCTURES_TREDBLACKTREEONE_HPP
 
-#ifndef XYO_DATASTRUCTURES_DEPENDENCY_HPP
-#	include <XYO/DataStructures/Dependency.hpp>
+#ifndef XYO_DATASTRUCTURES_TREDBLACKTREEONENODE_HPP
+#	include <XYO/DataStructures/TRedBlackTreeOneNode.hpp>
 #endif
 
 namespace XYO::DataStructures {
-
-	template <typename TKey, template <typename U> class TNodeMemory>
-	struct TRedBlackTreeNodeOne : TXRedBlackTreeNode<TRedBlackTreeNodeOne<TKey, TNodeMemory>, TKey> {
-			typedef TRedBlackTreeNodeOne TNode;
-			typedef TXRedBlackTree<TNode, TNodeMemory> TXRBTree;
-
-			inline TNode *minimum() {
-				return TXRBTree::minimum(this);
-			};
-
-			inline TNode *maximum() {
-				return TXRBTree::maximum(this);
-			};
-
-			inline TNode *successor() {
-				return TXRBTree::successor(this);
-			};
-
-			inline TNode *predecesor() {
-				return TXRBTree::predecesor(this);
-			};
-
-			inline void activeConstructor() {
-				TIfHasActiveConstructor<TKey>::activeConstructor(&this->key);
-			};
-
-			inline void activeDestructor() {
-				TIfHasActiveDestructor<TKey>::activeDestructor(&this->key);
-			};
-	};
 
 	template <typename TKey, template <typename U> class TNodeMemory = TMemory>
 	class TRedBlackTreeOne : public Object {

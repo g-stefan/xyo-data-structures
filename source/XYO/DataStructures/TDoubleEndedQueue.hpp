@@ -7,8 +7,8 @@
 #ifndef XYO_DATASTRUCTURES_TDOUBLEENDEDQUEUE_HPP
 #define XYO_DATASTRUCTURES_TDOUBLEENDEDQUEUE_HPP
 
-#ifndef XYO_DATASTRUCTURES_DEPENDENCY_HPP
-#	include <XYO/DataStructures/Dependency.hpp>
+#ifndef XYO_DATASTRUCTURES_TDOUBLEENDEDQUEUENODE_HPP
+#	include <XYO/DataStructures/TDoubleEndedQueueNode.hpp>
 #endif
 
 #ifndef XYO_DATASTRUCTURES_TXLIST3_HPP
@@ -16,21 +16,6 @@
 #endif
 
 namespace XYO::DataStructures {
-
-	template <typename T>
-	struct TDoubleEndedQueueNode : TXList3Node<TDoubleEndedQueueNode<T>> {
-			typedef TDoubleEndedQueueNode TNode;
-
-			T value;
-
-			inline void activeConstructor() {
-				TIfHasActiveConstructor<T>::activeConstructor(&value);
-			};
-
-			inline void activeDestructor() {
-				TIfHasActiveDestructor<T>::activeDestructor(&value);
-			};
-	};
 
 	template <typename T, template <typename U> class TNodeMemory = TMemory>
 	class TDoubleEndedQueue : public Object {

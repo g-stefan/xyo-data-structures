@@ -7,8 +7,8 @@
 #ifndef XYO_DATASTRUCTURES_TSTACKPOINTERUNSAFE_HPP
 #define XYO_DATASTRUCTURES_TSTACKPOINTERUNSAFE_HPP
 
-#ifndef XYO_DATASTRUCTURES_TSTACK_HPP
-#	include <XYO/DataStructures/TStack.hpp>
+#ifndef XYO_DATASTRUCTURES_TSTACKNODE_HPP
+#	include <XYO/DataStructures/TStackNode.hpp>
 #endif
 
 namespace XYO::DataStructures {

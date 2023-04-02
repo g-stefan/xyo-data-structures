@@ -7,45 +7,11 @@
 #ifndef XYO_DATASTRUCTURES_TREDBLACKTREE_HPP
 #define XYO_DATASTRUCTURES_TREDBLACKTREE_HPP
 
-#ifndef XYO_DATASTRUCTURES_DEPENDENCY_HPP
-#	include <XYO/DataStructures/Dependency.hpp>
+#ifndef XYO_DATASTRUCTURES_TREDBLACKTREENODE_HPP
+#	include <XYO/DataStructures/TRedBlackTreeNode.hpp>
 #endif
 
 namespace XYO::DataStructures {
-
-	template <typename TKey, typename TValue, template <typename U> class TNodeMemory>
-	struct TRedBlackTreeNode : TXRedBlackTreeNode<TRedBlackTreeNode<TKey, TValue, TNodeMemory>, TKey> {
-			typedef TRedBlackTreeNode TNode;
-			typedef TXRedBlackTree<TNode, TNodeMemory> TXRBTree;
-
-			TValue value;
-
-			inline TNode *minimum() {
-				return TXRBTree::minimum(this);
-			};
-
-			inline TNode *maximum() {
-				return TXRBTree::maximum(this);
-			};
-
-			inline TNode *successor() {
-				return TXRBTree::successor(this);
-			};
-
-			inline TNode *predecesor() {
-				return TXRBTree::predecesor(this);
-			};
-
-			inline void activeConstructor() {
-				TIfHasActiveConstructor<TKey>::activeConstructor(&this->key);
-				TIfHasActiveConstructor<TValue>::activeConstructor(&this->value);
-			};
-
-			inline void activeDestructor() {
-				TIfHasActiveDestructor<TKey>::activeDestructor(&this->key);
-				TIfHasActiveDestructor<TValue>::activeDestructor(&this->value);
-			};
-	};
 
 	template <typename TKey, typename TValue, template <typename U> class TNodeMemory = TMemory>
 	class TRedBlackTree : public Object {
