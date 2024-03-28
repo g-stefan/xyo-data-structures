@@ -19,7 +19,7 @@ namespace XYO::DataStructures {
 
 	template <typename TKey, typename TValue, size_t dataSize2Pow = 4, template <typename U> class TNodeMemory = TMemory>
 	class TAssociativeArray : public Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(TAssociativeArray);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(TAssociativeArray);
 
 		public:
 			typedef TRedBlackTree<TKey, size_t, TNodeMemory> TMapKey;

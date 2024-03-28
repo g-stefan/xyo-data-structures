@@ -15,7 +15,7 @@ namespace XYO::DataStructures {
 
 	template <typename T, template <typename U> class TNodeMemory = TMemory>
 	class TStack : public Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(TStack);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(TStack);
 
 		public:
 			typedef TStackNode<T> TNode;

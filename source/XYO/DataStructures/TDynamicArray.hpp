@@ -15,7 +15,7 @@ namespace XYO::DataStructures {
 
 	template <typename T, size_t dataSize2Pow = 4, template <typename U> class TNodeMemory = TMemory>
 	class TDynamicArray : public Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(TDynamicArray);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(TDynamicArray);
 
 		public:
 			static const size_t dataSize = (1 << dataSize2Pow);

@@ -40,7 +40,7 @@ private:
 	objectTypePush(type##T, type##T##Key);
 
 	class DynamicObject : public Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(DynamicObject);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(DynamicObject);
 			XYO_DYNAMIC_TYPE_DEFINE(XYO_DATASTRUCTURES_EXPORT, DynamicObject);
 
 		protected:

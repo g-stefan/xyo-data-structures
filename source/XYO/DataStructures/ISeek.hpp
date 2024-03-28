@@ -14,7 +14,7 @@
 namespace XYO::DataStructures {
 
 	class ISeek : public virtual Object {
-			XYO_INTERFACE(ISeek);
+			XYO_PLATFORM_INTERFACE(ISeek);
 
 		public:
 			virtual bool seekFromBegin(uint64_t x) = 0;

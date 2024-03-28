@@ -19,7 +19,7 @@ namespace XYO::DataStructures {
 
 	template <typename T>
 	class TRing {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(TRing);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(TRing);
 
 		protected:
 			size_t ringSize;

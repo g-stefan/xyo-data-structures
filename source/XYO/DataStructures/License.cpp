@@ -10,18 +10,18 @@ namespace XYO::DataStructures::License {
 
 	std::string license() {
 		std::string retV;
-		retV += ManagedMemory::License::licenseMITHeader();
-		retV += Copyright::copyright();
+		retV += Platform::License::licenseMITHeader();
+		retV += DataStructures::Copyright::copyright();
 		retV += "\r\n";
-		retV += ManagedMemory::License::licenseMITContent();
+		retV += Platform::License::licenseMITContent();
 		return retV;
 	};
 
 	std::string shortLicense() {
 		std::string retV;
-		retV += Copyright::copyright();
+		retV += DataStructures::Copyright::copyright();
 		retV += "\r\n";
-		retV += ManagedMemory::License::licenseMITShort();
+		retV += Platform::License::licenseMITShort();
 		return retV;
 	};
 

@@ -15,7 +15,7 @@ namespace XYO::DataStructures {
 
 	template <typename TKey, typename TValue, template <typename U> class TNodeMemory = TMemory>
 	class TRedBlackTree : public Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(TRedBlackTree);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(TRedBlackTree);
 
 		public:
 			typedef TRedBlackTreeNode<TKey, TValue, TNodeMemory> TNode;

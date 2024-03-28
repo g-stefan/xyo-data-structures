@@ -14,7 +14,7 @@
 namespace XYO::DataStructures {
 
 	class IWrite : public virtual Object {
-			XYO_INTERFACE(IWrite);
+			XYO_PLATFORM_INTERFACE(IWrite);
 
 		public:
 			virtual size_t write(const void *input, size_t length) = 0;

@@ -32,7 +32,7 @@ namespace XYO::DataStructures {
 			typedef TXRedBlackTree<TypeRegistryNode, TMemorySystem> RBTree;
 			TypeRegistryNode *root;
 
-#ifdef XYO_MULTI_THREAD
+#ifdef XYO_PLATFORM_MULTI_THREAD
 			CriticalSection criticalSection;
 #endif
 
@@ -55,7 +55,7 @@ namespace XYO::DataStructures {
 
 		TypeRegistry *typeRegistry = TSingletonProcess<TypeRegistry>::getValue();
 		TypeRegistry::RBTree::Node *this_;
-#ifdef XYO_MULTI_THREAD
+#ifdef XYO_PLATFORM_MULTI_THREAD
 		typeRegistry->criticalSection.enter();
 #endif
 		this_ = TypeRegistry::RBTree::find(typeRegistry->root, key);
@@ -65,7 +65,7 @@ namespace XYO::DataStructures {
 			TypeRegistry::RBTree::insertNode(typeRegistry->root, this_);
 		};
 
-#ifdef XYO_MULTI_THREAD
+#ifdef XYO_PLATFORM_MULTI_THREAD
 		typeRegistry->criticalSection.leave();
 #endif
 

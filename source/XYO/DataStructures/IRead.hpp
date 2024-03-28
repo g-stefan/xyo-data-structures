@@ -14,7 +14,7 @@
 namespace XYO::DataStructures {
 
 	class IRead : public virtual Object {
-			XYO_INTERFACE(IRead);
+			XYO_PLATFORM_INTERFACE(IRead);
 
 		public:
 			virtual size_t read(void *output, size_t length) = 0;

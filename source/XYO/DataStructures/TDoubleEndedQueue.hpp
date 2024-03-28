@@ -19,7 +19,7 @@ namespace XYO::DataStructures {
 
 	template <typename T, template <typename U> class TNodeMemory = TMemory>
 	class TDoubleEndedQueue : public Object {
-			XYO_DISALLOW_COPY_ASSIGN_MOVE(TDoubleEndedQueue);
+			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(TDoubleEndedQueue);
 
 		public:
 			typedef TDoubleEndedQueueNode<T> TNode;
