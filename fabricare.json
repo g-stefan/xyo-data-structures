@@ -13,6 +13,21 @@
 				]
 			},
 			{
+				"name": "xyo-data-structures.static",
+				"make": "lib",
+				"category": "make",
+				"SPDX-License-Identifier": "MIT",
+				"sourcePath" : "XYO/DataStructures",
+				"dependency" : [
+					"xyo-managed-memory.static"
+				],
+				"dependencyDefines" : [
+					"XYO_DATASTRUCTURES_LIBRARY"
+				],
+				"linkVersion": "xyo-data-structures",
+				"crt": "static"
+			},
+			{
 				"name" : "test.01",
 				"make" : "exe",
 				"category" : "test",
