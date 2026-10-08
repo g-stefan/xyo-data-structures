@@ -51,11 +51,11 @@ namespace XYO::DataStructures {
 				TXRBTree::empty(root);
 			};
 
-			inline TNode *find(const TKey &key) {
+			[[nodiscard]] inline TNode *find(const TKey &key) {
 				return TXRBTree::find(root, key);
 			};
 
-			inline TNode *find(const TKeyType *key) {
+			[[nodiscard]] inline TNode *find(const TKeyType *key) {
 				TNode *x;
 				int compare;
 				for (x = root; x;) {
@@ -73,28 +73,45 @@ namespace XYO::DataStructures {
 			};
 
 			inline void set(const TKey &key) {
-				TNode *node = TXRBTree::find(root, key);
+				TNode *parent;
+				bool isLeft;
+				TNode *node = findPosition(key, parent, isLeft);
 				if (node) {
 					return;
 				};
 				node = TXRBTree::newNode();
 				TIfHasPointerLink<TKey>::pointerLink(&node->key, this);
 				node->key = key;
-				TXRBTree::insertNode(root, node);
+				TXRBTree::insertNodeAt(root, parent, isLeft, node);
+			};
+
+			inline void set(TKey &&key) {
+				TNode *parent;
+				bool isLeft;
+				TNode *node = findPosition(key, parent, isLeft);
+				if (node) {
+					return;
+				};
+				node = TXRBTree::newNode();
+				TIfHasPointerLink<TKey>::pointerLink(&node->key, this);
+				node->key = std::move(key);
+				TXRBTree::insertNodeAt(root, parent, isLeft, node);
 			};
 
 			inline void set(const TKeyType *key) {
-				TNode *node = find(key);
+				TNode *parent;
+				bool isLeft;
+				TNode *node = findPosition(key, parent, isLeft);
 				if (node) {
 					return;
 				};
 				node = TXRBTree::newNode();
 				TIfHasPointerLink<TKey>::pointerLink(&node->key, this);
 				node->key = key;
-				TXRBTree::insertNode(root, node);
+				TXRBTree::insertNodeAt(root, parent, isLeft, node);
 			};
 
-			inline bool has(const TKey &key) {
+			[[nodiscard]] inline bool has(const TKey &key) {
 				TNode *node = TXRBTree::find(root, key);
 				if (node) {
 					return true;
@@ -102,7 +119,7 @@ namespace XYO::DataStructures {
 				return false;
 			};
 
-			inline bool has(const TKeyType *key) {
+			[[nodiscard]] inline bool has(const TKeyType *key) {
 				TNode *node = find(key);
 				if (node) {
 					return true;
@@ -110,11 +127,11 @@ namespace XYO::DataStructures {
 				return false;
 			};
 
-			inline TNode *begin() {
+			[[nodiscard]] inline TNode *begin() noexcept {
 				return TXRBTree::begin(root);
 			};
 
-			inline TNode *end() {
+			[[nodiscard]] inline TNode *end() noexcept {
 				return TXRBTree::end(root);
 			};
 
@@ -133,6 +150,51 @@ namespace XYO::DataStructures {
 					return true;
 				};
 				return false;
+			};
+
+		protected:
+			// Search key, on a miss return nullptr and set parent / isLeft
+			// to where a node with this key must be linked (TXRBTree::insertNodeAt)
+			[[nodiscard]] inline TNode *findPosition(const TKey &key, TNode *&parent, bool &isLeft) {
+				TNode *x;
+				int compare;
+				parent = nullptr;
+				isLeft = false;
+				for (x = root; x;) {
+					compare = TComparator<TKey>::compare(key, x->key);
+					if (compare == 0) {
+						return x;
+					};
+					parent = x;
+					isLeft = (compare < 0);
+					if (isLeft) {
+						x = x->left;
+					} else {
+						x = x->right;
+					};
+				};
+				return nullptr;
+			};
+
+			[[nodiscard]] inline TNode *findPosition(const TKeyType *key, TNode *&parent, bool &isLeft) {
+				TNode *x;
+				int compare;
+				parent = nullptr;
+				isLeft = false;
+				for (x = root; x;) {
+					compare = TComparator<TKeyType>::compare(*key, *(x->key));
+					if (compare == 0) {
+						return x;
+					};
+					parent = x;
+					isLeft = (compare < 0);
+					if (isLeft) {
+						x = x->left;
+					} else {
+						x = x->right;
+					};
+				};
+				return nullptr;
 			};
 	};
 

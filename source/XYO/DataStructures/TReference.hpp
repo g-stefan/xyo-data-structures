@@ -41,15 +41,15 @@ namespace XYO::DataStructures {
 
 			//
 
-			inline T *operator->() const {
+			inline T *operator->() const noexcept {
 				return object;
 			};
 
-			inline operator T *() const {
+			[[nodiscard]] inline operator T *() const noexcept {
 				return object;
 			};
 
-			inline T *value() const {
+			[[nodiscard]] inline T *value() const noexcept {
 				return object;
 			};
 	};

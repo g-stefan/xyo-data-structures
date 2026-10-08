@@ -48,9 +48,10 @@ namespace XYO::DataStructures {
 		RBTree::destructor(root);
 	};
 
-	void DynamicObject::registerType(const void *&type, const char *key) {
-		if (type != nullptr) {
-			return;
+	const void *DynamicObject::registerType(TAtomic<const void *> &type, const char *key) {
+		const void *retV = type.get(std::memory_order_acquire);
+		if (retV != nullptr) {
+			return retV;
 		};
 
 		TypeRegistry *typeRegistry = TSingletonProcess<TypeRegistry>::getValue();
@@ -58,18 +59,25 @@ namespace XYO::DataStructures {
 #ifdef XYO_PLATFORM_MULTI_THREAD
 		typeRegistry->criticalSection.enter();
 #endif
-		this_ = TypeRegistry::RBTree::find(typeRegistry->root, key);
-		if (this_ == nullptr) {
-			this_ = TypeRegistry::RBTree::newNode();
-			this_->key = key;
-			TypeRegistry::RBTree::insertNode(typeRegistry->root, this_);
+		// Another thread may have registered it while this one was waiting,
+		// type is only written under the lock, so relaxed is enough here
+		retV = type.get(std::memory_order_relaxed);
+		if (retV == nullptr) {
+			this_ = TypeRegistry::RBTree::find(typeRegistry->root, key);
+			if (this_ == nullptr) {
+				this_ = TypeRegistry::RBTree::newNode();
+				this_->key = key;
+				TypeRegistry::RBTree::insertNode(typeRegistry->root, this_);
+			};
+			retV = this_;
+			// Publish only after the node is complete
+			type.set(retV, std::memory_order_release);
 		};
-
 #ifdef XYO_PLATFORM_MULTI_THREAD
 		typeRegistry->criticalSection.leave();
 #endif
 
-		type = this_;
+		return retV;
 	};
 
 	const char *DynamicObject::getTypeKey(const void *type) {
@@ -80,8 +88,7 @@ namespace XYO::DataStructures {
 		return (reinterpret_cast<const TypeRegistry::RBTree::Node *>(objectType_->type))->key;
 	};
 
-	void DynamicObject::objectTypePush(const void *&type, const char *key) {
-		registerType(type, key);
+	void DynamicObject::objectTypePush(const void *type) {
 		DynamicTypeNode *node = DynamicTypeList::newNode();
 		node->type = type;
 		DynamicTypeList::push(objectType_, node);

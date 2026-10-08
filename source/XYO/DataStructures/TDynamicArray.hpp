@@ -18,8 +18,8 @@ namespace XYO::DataStructures {
 			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(TDynamicArray);
 
 		public:
-			static const size_t dataSize = (1 << dataSize2Pow);
-			static const size_t dataMask = ((1 << dataSize2Pow) - 1);
+			static constexpr size_t dataSize = (static_cast<size_t>(1) << dataSize2Pow);
+			static constexpr size_t dataMask = (dataSize - 1);
 
 			typedef TDynamicArrayNode<T, dataSize> TNode;
 			typedef TNode Node;
@@ -34,7 +34,7 @@ namespace XYO::DataStructures {
 
 			TNode **value;
 
-			inline TDynamicArray(int indexSize_ = 1) {
+			inline TDynamicArray(size_t indexSize_ = 1) {
 				size_t k;
 				indexSize = indexSize_;
 				itemSize = indexSize * dataSize;
@@ -55,8 +55,8 @@ namespace XYO::DataStructures {
 			};
 
 			inline void empty() {
-				int indexHigh;
-				int indexScanHigh;
+				size_t indexHigh;
+				size_t indexScanHigh;
 				if (length_ == 0) {
 					return;
 				};
@@ -64,11 +64,13 @@ namespace XYO::DataStructures {
 				for (indexScanHigh = 0; indexScanHigh < indexHigh; ++indexScanHigh) {
 					value[indexScanHigh]->empty(dataSize);
 				};
-				value[indexHigh]->empty(length_ & dataMask);
+				if (length_ & dataMask) {
+					value[indexHigh]->empty(length_ & dataMask);
+				};
 				length_ = 0;
 			};
 
-			inline void growWith(int count_) {
+			inline void growWith(size_t count_) {
 				size_t k;
 				size_t newIndexSize = indexSize + count_;
 				TNode **newValue;
@@ -100,7 +102,7 @@ namespace XYO::DataStructures {
 				return value[idx >> dataSize2Pow]->value[idx & dataMask];
 			};
 
-			inline bool get(size_t index, T &object) const {
+			[[nodiscard]] inline bool get(size_t index, T &object) const {
 				if (index >= length_) {
 					return false;
 				};
@@ -108,7 +110,7 @@ namespace XYO::DataStructures {
 				return true;
 			};
 
-			inline bool get(size_t index, TPointerT &object) const {
+			[[nodiscard]] inline bool get(size_t index, TPointerT &object) const {
 				if (index >= length_) {
 					return false;
 				};
@@ -116,7 +118,7 @@ namespace XYO::DataStructures {
 				return true;
 			};
 
-			inline bool get(size_t index, TPointerXT &object) const {
+			[[nodiscard]] inline bool get(size_t index, TPointerXT &object) const {
 				if (index >= length_) {
 					return false;
 				};
@@ -162,6 +164,16 @@ namespace XYO::DataStructures {
 				value[index >> dataSize2Pow]->value[index & dataMask] = object;
 			};
 
+			inline void set(size_t index, T &&object) {
+				if (index >= length_) {
+					length_ = index + 1;
+					if (index >= itemSize) {
+						growWith((index >> dataSize2Pow) - indexSize + 1);
+					};
+				};
+				value[index >> dataSize2Pow]->value[index & dataMask] = std::move(object);
+			};
+
 			inline void set(size_t index, const TType *object) {
 				if (index >= length_) {
 					length_ = index + 1;
@@ -172,16 +184,19 @@ namespace XYO::DataStructures {
 				value[index >> dataSize2Pow]->value[index & dataMask] = object;
 			};
 
-			inline size_t length() const {
+			[[nodiscard]] inline size_t length() const noexcept {
 				return length_;
 			};
 
-			inline size_t arraySize() const {
+			[[nodiscard]] inline size_t arraySize() const noexcept {
 				return itemSize;
 			};
 
 			inline void setLength(size_t newLength) {
 				if (newLength <= length_) {
+					for (size_t k = newLength; k < length_; ++k) {
+						value[k >> dataSize2Pow]->resetIndex(k & dataMask);
+					};
 					length_ = newLength;
 					return;
 				};
@@ -201,7 +216,7 @@ namespace XYO::DataStructures {
 				TNodeMemory<TNode>::initMemory();
 			};
 
-			inline bool isEmpty() const {
+			[[nodiscard]] inline bool isEmpty() const noexcept {
 				return (length_ == 0);
 			};
 
@@ -214,7 +229,7 @@ namespace XYO::DataStructures {
 				if (length_ == 0) {
 					return false;
 				};
-				out = value[0]->value[0];
+				out = std::move(value[0]->value[0]);
 				--length_;
 				if (length_ > 0) {
 					indexHigh = length_ >> dataSize2Pow;
@@ -229,6 +244,8 @@ namespace XYO::DataStructures {
 						value[indexHigh]->value[indexScanLow] = std::move(value[indexHigh]->value[indexScanLow + 1]);
 					};
 					value[indexHigh]->resetIndex(indexScanLow);
+				} else {
+					value[0]->resetIndex(0);
 				};
 				return true;
 			};
@@ -257,6 +274,8 @@ namespace XYO::DataStructures {
 						value[indexHigh]->value[indexScanLow] = std::move(value[indexHigh]->value[indexScanLow + 1]);
 					};
 					value[indexHigh]->resetIndex(indexScanLow);
+				} else {
+					value[0]->resetIndex(0);
 				};
 				return true;
 			};
@@ -285,6 +304,8 @@ namespace XYO::DataStructures {
 						value[indexHigh]->value[indexScanLow] = std::move(value[indexHigh]->value[indexScanLow + 1]);
 					};
 					value[indexHigh]->resetIndex(indexScanLow);
+				} else {
+					value[0]->resetIndex(0);
 				};
 				return true;
 			};
@@ -312,6 +333,8 @@ namespace XYO::DataStructures {
 						value[indexHigh]->value[indexScanLow] = std::move(value[indexHigh]->value[indexScanLow + 1]);
 					};
 					value[indexHigh]->resetIndex(indexScanLow);
+				} else {
+					value[0]->resetIndex(0);
 				};
 			};
 
@@ -339,7 +362,7 @@ namespace XYO::DataStructures {
 						for (indexScanLow = indexLowX; indexScanLow < dataSize - 1; ++indexScanLow) {
 							value[indexScanHigh]->value[indexScanLow] = std::move(value[indexScanHigh]->value[indexScanLow + 1]);
 						};
-						value[indexScanHigh]->value[dataSize - 1] = value[indexScanHigh + 1]->value[0];
+						value[indexScanHigh]->value[dataSize - 1] = std::move(value[indexScanHigh + 1]->value[0]);
 						for (indexScanLow = 0; indexScanLow < indexLowX; ++indexScanLow) {
 							value[indexScanHigh + 1]->value[indexScanLow] = std::move(value[indexScanHigh + 1]->value[indexScanLow + 1]);
 						};
@@ -348,6 +371,8 @@ namespace XYO::DataStructures {
 						value[indexHigh]->value[indexScanLow] = std::move(value[indexHigh]->value[indexScanLow + 1]);
 					};
 					value[indexHigh]->resetIndex(indexScanLow);
+				} else {
+					value[0]->resetIndex(0);
 				};
 				return true;
 			};
@@ -367,8 +392,8 @@ namespace XYO::DataStructures {
 				};
 				size_t k;
 				++length_;
-				if (idx >= itemSize) {
-					growWith((idx >> dataSize2Pow) - indexSize + 1);
+				if (length_ > itemSize) {
+					growWith(((length_ - 1) >> dataSize2Pow) - indexSize + 1);
 				};
 				for (k = length_ - 1; k > idx; --k) {
 					index(k) = std::move(index(k - 1));
@@ -385,6 +410,15 @@ namespace XYO::DataStructures {
 				value[idx >> dataSize2Pow]->value[idx & dataMask] = value_;
 			};
 
+			inline void push(T &&value_) {
+				size_t idx = length_;
+				++length_;
+				if (idx >= itemSize) {
+					growWith((idx >> dataSize2Pow) - indexSize + 1);
+				};
+				value[idx >> dataSize2Pow]->value[idx & dataMask] = std::move(value_);
+			};
+
 			inline void push(const TType *value_) {
 				size_t idx = length_;
 				++length_;
@@ -396,9 +430,12 @@ namespace XYO::DataStructures {
 
 			inline void copy(const TDynamicArray &value) {
 				size_t k;
+				if (&value == this) {
+					return;
+				};
 				empty();
 				for (k = 0; k < value.length(); ++k) {
-					value.get(k, index(k));
+					static_cast<void>(value.get(k, index(k)));
 				};
 			};
 	};

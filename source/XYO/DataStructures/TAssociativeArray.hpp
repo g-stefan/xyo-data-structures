@@ -72,7 +72,7 @@ namespace XYO::DataStructures {
 				empty();
 			};
 
-			inline bool get(const TKey &key, TValue &value) const {
+			[[nodiscard]] inline bool get(const TKey &key, TValue &value) const {
 				size_t index;
 				if (mapKey->get(key, index)) {
 					return arrayValue->get(index, value);
@@ -80,7 +80,7 @@ namespace XYO::DataStructures {
 				return false;
 			};
 
-			inline bool get(const TKey &key, TPointerTValue &value) const {
+			[[nodiscard]] inline bool get(const TKey &key, TPointerTValue &value) const {
 				size_t index;
 				if (mapKey->get(key, index)) {
 					return arrayValue->get(index, value);
@@ -88,7 +88,7 @@ namespace XYO::DataStructures {
 				return false;
 			};
 
-			inline bool get(const TKey &key, TPointerXTValue &value) const {
+			[[nodiscard]] inline bool get(const TKey &key, TPointerXTValue &value) const {
 				size_t index;
 				if (mapKey->get(key, index)) {
 					return arrayValue->get(index, value);
@@ -96,7 +96,7 @@ namespace XYO::DataStructures {
 				return false;
 			};
 
-			inline bool get(const TKeyType *key, TPointerTValue &value) const {
+			[[nodiscard]] inline bool get(const TKeyType *key, TPointerTValue &value) const {
 				size_t index;
 				if (mapKey->get(key, index)) {
 					return arrayValue->get(index, value);
@@ -104,7 +104,7 @@ namespace XYO::DataStructures {
 				return false;
 			};
 
-			inline bool get(const TKeyType *key, TPointerXTValue &value) const {
+			[[nodiscard]] inline bool get(const TKeyType *key, TPointerXTValue &value) const {
 				size_t index;
 				if (mapKey->get(key, index)) {
 					return arrayValue->get(index, value);
@@ -121,6 +121,18 @@ namespace XYO::DataStructures {
 				mapKey->insert(key, length_);
 				arrayKey->set(length_, key);
 				arrayValue->set(length_, value);
+				++length_;
+			};
+
+			inline void set(const TKey &key, TValue &&value) {
+				size_t index;
+				if (mapKey->get(key, index)) {
+					arrayValue->set(index, std::move(value));
+					return;
+				};
+				mapKey->insert(key, length_);
+				arrayKey->set(length_, key);
+				arrayValue->set(length_, std::move(value));
 				++length_;
 			};
 
@@ -190,7 +202,7 @@ namespace XYO::DataStructures {
 				return false;
 			};
 
-			inline size_t length() const {
+			[[nodiscard]] inline size_t length() const noexcept {
 				return length_;
 			};
 

@@ -271,6 +271,13 @@ namespace XYO::DataStructures {
 				TNode *headX = node->childHead;
 				TNode *tailX = node->childTail;
 
+				if (headX == nullptr) {
+					return;
+				};
+				if (tailX == nullptr) {
+					return;
+				};
+
 				extractList(node, headX, tailX);
 				addListToTail(root, headX, tailX);
 			};

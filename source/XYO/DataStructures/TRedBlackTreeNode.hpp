@@ -32,8 +32,8 @@ namespace XYO::DataStructures {
 				return TXRBTree::successor(this);
 			};
 
-			inline TNode *predecesor() {
-				return TXRBTree::predecesor(this);
+			inline TNode *predecessor() {
+				return TXRBTree::predecessor(this);
 			};
 
 			inline void activeConstructor() {

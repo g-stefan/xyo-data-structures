@@ -55,11 +55,11 @@ namespace XYO::DataStructures {
 				TXRBTree::empty(root);
 			};
 
-			inline TNode *find(const TKey &key) {
+			[[nodiscard]] inline TNode *find(const TKey &key) {
 				return TXRBTree::find(root, key);
 			};
 
-			inline TNode *find(const TKeyType *key) {
+			[[nodiscard]] inline TNode *find(const TKeyType *key) {
 				TNode *x;
 				int compare;
 				for (x = root; x;) {
@@ -77,7 +77,9 @@ namespace XYO::DataStructures {
 			};
 
 			inline void set(const TKey &key, const TValue &value) {
-				TNode *node = TXRBTree::find(root, key);
+				TNode *parent;
+				bool isLeft;
+				TNode *node = findPosition(key, parent, isLeft);
 				if (node) {
 					node->value = value;
 					return;
@@ -87,11 +89,29 @@ namespace XYO::DataStructures {
 				TIfHasPointerLink<TValue>::pointerLink(&node->value, this);
 				node->key = key;
 				node->value = value;
-				TXRBTree::insertNode(root, node);
+				TXRBTree::insertNodeAt(root, parent, isLeft, node);
+			};
+
+			inline void set(const TKey &key, TValue &&value) {
+				TNode *parent;
+				bool isLeft;
+				TNode *node = findPosition(key, parent, isLeft);
+				if (node) {
+					node->value = std::move(value);
+					return;
+				};
+				node = TXRBTree::newNode();
+				TIfHasPointerLink<TKey>::pointerLink(&node->key, this);
+				TIfHasPointerLink<TValue>::pointerLink(&node->value, this);
+				node->key = key;
+				node->value = std::move(value);
+				TXRBTree::insertNodeAt(root, parent, isLeft, node);
 			};
 
 			inline void set(const TKey &key, const TValueType *value) {
-				TNode *node = TXRBTree::find(root, key);
+				TNode *parent;
+				bool isLeft;
+				TNode *node = findPosition(key, parent, isLeft);
 				if (node) {
 					node->value = value;
 					return;
@@ -101,11 +121,13 @@ namespace XYO::DataStructures {
 				TIfHasPointerLink<TValue>::pointerLink(&node->value, this);
 				node->key = key;
 				node->value = value;
-				TXRBTree::insertNode(root, node);
+				TXRBTree::insertNodeAt(root, parent, isLeft, node);
 			};
 
 			inline void set(const TKeyType *key, const TValue &value) {
-				TNode *node = find(key);
+				TNode *parent;
+				bool isLeft;
+				TNode *node = findPosition(key, parent, isLeft);
 				if (node) {
 					node->value = value;
 					return;
@@ -115,11 +137,13 @@ namespace XYO::DataStructures {
 				TIfHasPointerLink<TValue>::pointerLink(&node->value, this);
 				node->key = key;
 				node->value = value;
-				TXRBTree::insertNode(root, node);
+				TXRBTree::insertNodeAt(root, parent, isLeft, node);
 			};
 
 			inline void set(const TKeyType *key, const TValueType *value) {
-				TNode *node = find(key);
+				TNode *parent;
+				bool isLeft;
+				TNode *node = findPosition(key, parent, isLeft);
 				if (node) {
 					node->value = value;
 					return;
@@ -129,10 +153,10 @@ namespace XYO::DataStructures {
 				TIfHasPointerLink<TValue>::pointerLink(&node->value, this);
 				node->key = key;
 				node->value = value;
-				TXRBTree::insertNode(root, node);
+				TXRBTree::insertNodeAt(root, parent, isLeft, node);
 			};
 
-			inline bool get(const TKey &key, TValue &value) {
+			[[nodiscard]] inline bool get(const TKey &key, TValue &value) {
 				TNode *node = TXRBTree::find(root, key);
 				if (node) {
 					value = node->value;
@@ -141,7 +165,7 @@ namespace XYO::DataStructures {
 				return false;
 			};
 
-			inline bool get(const TKey &key, TPointerTValue &value) {
+			[[nodiscard]] inline bool get(const TKey &key, TPointerTValue &value) {
 				TNode *node = TXRBTree::find(root, key);
 				if (node) {
 					value = node->value;
@@ -150,7 +174,7 @@ namespace XYO::DataStructures {
 				return false;
 			};
 
-			inline bool get(const TKey &key, TPointerXTValue &value) {
+			[[nodiscard]] inline bool get(const TKey &key, TPointerXTValue &value) {
 				TNode *node = TXRBTree::find(root, key);
 				if (node) {
 					value = node->value;
@@ -159,7 +183,7 @@ namespace XYO::DataStructures {
 				return false;
 			};
 
-			inline bool get(const TKeyType *key, TValueType &value) {
+			[[nodiscard]] inline bool get(const TKeyType *key, TValueType &value) {
 				TNode *node = find(key);
 				if (node) {
 					value = *(node->value);
@@ -168,7 +192,7 @@ namespace XYO::DataStructures {
 				return false;
 			};
 
-			inline bool get(const TKeyType *key, TPointerTValue &value) {
+			[[nodiscard]] inline bool get(const TKeyType *key, TPointerTValue &value) {
 				TNode *node = find(key);
 				if (node) {
 					value = node->value;
@@ -177,7 +201,7 @@ namespace XYO::DataStructures {
 				return false;
 			};
 
-			inline bool get(const TKeyType *key, TPointerXTValue &value) {
+			[[nodiscard]] inline bool get(const TKeyType *key, TPointerXTValue &value) {
 				TNode *node = find(key);
 				if (node) {
 					value = node->value;
@@ -186,7 +210,7 @@ namespace XYO::DataStructures {
 				return false;
 			};
 
-			inline TValue getValue(const TKey &key, const TValue &value) {
+			[[nodiscard]] inline TValue getValue(const TKey &key, const TValue &value) {
 				TNode *node = TXRBTree::find(root, key);
 				if (node) {
 					return node->value;
@@ -194,7 +218,7 @@ namespace XYO::DataStructures {
 				return value;
 			};
 
-			inline TPointer<TValue> getValue(const TKey &key, const TValueType *value) {
+			[[nodiscard]] inline TPointer<TValueType> getValue(const TKey &key, const TValueType *value) {
 				TNode *node = TXRBTree::find(root, key);
 				if (node) {
 					return node->value;
@@ -202,7 +226,7 @@ namespace XYO::DataStructures {
 				return value;
 			};
 
-			inline TValue getValue(const TKeyType *key, const TValue &value) {
+			[[nodiscard]] inline TValue getValue(const TKeyType *key, const TValue &value) {
 				TNode *node = find(key);
 				if (node) {
 					return node->value;
@@ -210,7 +234,7 @@ namespace XYO::DataStructures {
 				return value;
 			};
 
-			inline TPointer<TValue> getValue(const TKeyType *key, const TValueType *value) {
+			[[nodiscard]] inline TPointer<TValueType> getValue(const TKeyType *key, const TValueType *value) {
 				TNode *node = find(key);
 				if (node) {
 					return node->value;
@@ -225,6 +249,16 @@ namespace XYO::DataStructures {
 				TIfHasPointerLink<TValue>::pointerLink(&node->value, this);
 				node->key = key;
 				node->value = value;
+				TXRBTree::insertNode(root, node);
+			};
+
+			inline void insert(const TKey &key, TValue &&value) {
+				TNode *node;
+				node = TXRBTree::newNode();
+				TIfHasPointerLink<TKey>::pointerLink(&node->key, this);
+				TIfHasPointerLink<TValue>::pointerLink(&node->value, this);
+				node->key = key;
+				node->value = std::move(value);
 				TXRBTree::insertNode(root, node);
 			};
 
@@ -278,11 +312,11 @@ namespace XYO::DataStructures {
 				return node;
 			};
 
-			inline TNode *begin() {
+			[[nodiscard]] inline TNode *begin() noexcept {
 				return TXRBTree::begin(root);
 			};
 
-			inline TNode *end() {
+			[[nodiscard]] inline TNode *end() noexcept {
 				return TXRBTree::end(root);
 			};
 
@@ -309,6 +343,51 @@ namespace XYO::DataStructures {
 					return true;
 				};
 				return false;
+			};
+
+		protected:
+			// Search key, on a miss return nullptr and set parent / isLeft
+			// to where a node with this key must be linked (TXRBTree::insertNodeAt)
+			[[nodiscard]] inline TNode *findPosition(const TKey &key, TNode *&parent, bool &isLeft) {
+				TNode *x;
+				int compare;
+				parent = nullptr;
+				isLeft = false;
+				for (x = root; x;) {
+					compare = TComparator<TKey>::compare(key, x->key);
+					if (compare == 0) {
+						return x;
+					};
+					parent = x;
+					isLeft = (compare < 0);
+					if (isLeft) {
+						x = x->left;
+					} else {
+						x = x->right;
+					};
+				};
+				return nullptr;
+			};
+
+			[[nodiscard]] inline TNode *findPosition(const TKeyType *key, TNode *&parent, bool &isLeft) {
+				TNode *x;
+				int compare;
+				parent = nullptr;
+				isLeft = false;
+				for (x = root; x;) {
+					compare = TComparator<TKeyType>::compare(*key, *(x->key));
+					if (compare == 0) {
+						return x;
+					};
+					parent = x;
+					isLeft = (compare < 0);
+					if (isLeft) {
+						x = x->left;
+					} else {
+						x = x->right;
+					};
+				};
+				return nullptr;
 			};
 	};
 

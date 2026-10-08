@@ -79,7 +79,7 @@ namespace XYO::DataStructures {
 					root[index] = std::move(this_.root[index]);
 				};
 
-				deleteArray(this_);
+				destructor(this_);
 
 				this_.size = size;
 				this_.root = root;
@@ -142,7 +142,18 @@ namespace XYO::DataStructures {
 					return true;
 				};
 
+				if (this_.length >= this_.size) {
+					return false;
+				};
+
 				TIfHasActiveConstructor<T>::activeConstructorArray(&this_.root[this_.length], 1);
+
+				// value can be an element of this array at or after index,
+				// the shift below moves it one position to the right
+				const T *source = &value;
+				if ((source >= &this_.root[index]) && (source < &this_.root[this_.length])) {
+					++source;
+				};
 
 				size_t scan;
 
@@ -152,7 +163,7 @@ namespace XYO::DataStructures {
 
 				++this_.length;
 
-				this_.root[index] = value;
+				this_.root[index] = *source;
 
 				return true;
 			};

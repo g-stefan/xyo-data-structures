@@ -17,35 +17,39 @@ namespace XYO::DataStructures {
 			const void *type;
 	};
 
-#define XYO_DYNAMIC_TYPE_DEFINE(EXPORT, T)                   \
-protected:                                                   \
-	EXPORT static const char *type##T##Key;              \
-	EXPORT static const void *type##T;                   \
-                                                             \
-public:                                                      \
-	static inline const void *getType() {                \
-		if (type##T == nullptr) {                    \
-			registerType(type##T, type##T##Key); \
-		};                                           \
-		return type##T;                              \
-	};                                                   \
-                                                             \
+// The type is registered on first use, from any thread.
+// type##T is atomic: acquire here pairs with the release in registerType,
+// so a non null value always points to a fully registered type.
+#define XYO_DYNAMIC_TYPE_DEFINE(EXPORT, T)                                          \
+protected:                                                                          \
+	EXPORT static const char *type##T##Key;                                     \
+	EXPORT static XYO::Platform::Multithreading::TAtomic<const void *> type##T; \
+                                                                                    \
+public:                                                                             \
+	static inline const void *getType() {                                       \
+		const void *type = type##T.get(std::memory_order_acquire);          \
+		if (type == nullptr) {                                              \
+			type = registerType(type##T, type##T##Key);                 \
+		};                                                                  \
+		return type;                                                        \
+	};                                                                          \
+                                                                                    \
 private:
 
 #define XYO_DYNAMIC_TYPE_IMPLEMENT(T, KEY) \
 	const char *T::type##T##Key = KEY; \
-	const void *T::type##T = nullptr;
+	XYO::Platform::Multithreading::TAtomic<const void *> T::type##T(nullptr);
 
 #define XYO_DYNAMIC_TYPE_PUSH(T) \
-	objectTypePush(type##T, type##T##Key);
+	objectTypePush(T::getType());
 
 	class DynamicObject : public Object {
 			XYO_PLATFORM_DISALLOW_COPY_ASSIGN_MOVE(DynamicObject);
 			XYO_DYNAMIC_TYPE_DEFINE(XYO_DATASTRUCTURES_EXPORT, DynamicObject);
 
 		protected:
-			XYO_DATASTRUCTURES_EXPORT static void registerType(const void *&type, const char *key);
-			XYO_DATASTRUCTURES_EXPORT void objectTypePush(const void *&type, const char *key);
+			XYO_DATASTRUCTURES_EXPORT static const void *registerType(TAtomic<const void *> &type, const char *key);
+			XYO_DATASTRUCTURES_EXPORT void objectTypePush(const void *type);
 			XYO_DATASTRUCTURES_EXPORT bool objectTypeSearchNext(const void *type);
 			DynamicTypeNode *objectType_;
 
@@ -56,42 +60,42 @@ private:
 			XYO_DATASTRUCTURES_EXPORT static const char *getTypeKey(const void *type);
 			XYO_DATASTRUCTURES_EXPORT const char *getTypeKey();
 
-			inline bool isType(const void *type) {
+			[[nodiscard]] inline bool isType(const void *type) {
 				if (objectType_->type == type) {
 					return true;
 				};
 				return objectTypeSearchNext(type);
 			};
 
-			inline bool isTypeExact(const void *type) {
+			[[nodiscard]] inline bool isTypeExact(const void *type) noexcept {
 				if (objectType_->type == type) {
 					return true;
 				};
 				return false;
 			};
 
-			inline bool isSameType(DynamicObject *dynamicObject) {
+			[[nodiscard]] inline bool isSameType(DynamicObject *dynamicObject) noexcept {
 				return (objectType_->type == dynamicObject->objectType_->type);
 			};
 	};
 
 	template <typename T>
-	bool TIsType(DynamicObject *object) {
+	[[nodiscard]] bool TIsType(DynamicObject *object) {
 		return object->isType(T::getType());
 	};
 
 	template <typename T>
-	bool TIsTypeExact(DynamicObject *object) {
+	[[nodiscard]] bool TIsTypeExact(DynamicObject *object) {
 		return object->isTypeExact(T::getType());
 	};
 
 	template <typename T>
-	const char *TGetTypeKey() {
+	[[nodiscard]] const char *TGetTypeKey() {
 		return DynamicObject::getTypeKey(T::getType());
 	};
 
 	template <typename T>
-	T TDynamicCast(DynamicObject *object) {
+	[[nodiscard]] T TDynamicCast(DynamicObject *object) {
 		typedef typename std::remove_pointer<T>::type TType;
 		if (object == nullptr) {
 			return nullptr;
@@ -103,7 +107,7 @@ private:
 	};
 
 	template <typename T>
-	DynamicObject *TDynamicCast(T this_) {
+	[[nodiscard]] DynamicObject *TDynamicCast(T this_) {
 		if (this_ == nullptr) {
 			return nullptr;
 		};
@@ -111,7 +115,7 @@ private:
 	};
 
 	template <DynamicObject *>
-	DynamicObject *TDynamicCast(DynamicObject *this_) {
+	[[nodiscard]] DynamicObject *TDynamicCast(DynamicObject *this_) {
 		return this_;
 	};
 };

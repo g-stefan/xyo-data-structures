@@ -17,9 +17,15 @@ namespace XYO::DataStructures {
 	struct TDynamicArrayNode {
 			typedef TDynamicArrayNode TNode;
 
+			// A slot that is not in use holds T(): types with lifetime hooks (TPointer, TPointerX,
+			// pooled objects) are reset by their hooks, other types by assigning T(),
+			// so a removed element does not keep its value or its resources
+			static constexpr bool hasActiveHooks = THasActiveConstructor<T>::value || THasActiveDestructor<T>::value;
+
 			T value[dataSize];
 
-			inline TDynamicArrayNode(){};
+			// Value initialization, a slot never written reads as T() (0 for scalars)
+			inline TDynamicArrayNode() : value(){};
 
 			inline ~TDynamicArrayNode(){};
 
@@ -27,18 +33,40 @@ namespace XYO::DataStructures {
 				TIfHasActiveConstructor<T>::activeConstructorArray(&value[0], dataSize);
 			};
 
+			// Before the node is freed or returned to an active pool,
+			// a node reused from an active pool must not bring back old values
 			inline void activeDestructor() {
-				TIfHasActiveDestructor<T>::activeDestructorArray(&value[0], dataSize);
+				if constexpr (hasActiveHooks) {
+					TIfHasActiveDestructor<T>::activeDestructorArray(&value[0], dataSize);
+				} else {
+					resetArray(dataSize);
+				};
 			};
 
-			inline void empty(int count_) {
-				TIfHasActiveDestructor<T>::activeDestructorArray(&value[0], count_);
-				TIfHasActiveConstructor<T>::activeConstructorArray(&value[0], count_);
+			inline void empty(size_t count_) {
+				if constexpr (hasActiveHooks) {
+					TIfHasActiveDestructor<T>::activeDestructorArray(&value[0], count_);
+					TIfHasActiveConstructor<T>::activeConstructorArray(&value[0], count_);
+				} else {
+					resetArray(count_);
+				};
 			};
 
 			inline void resetIndex(size_t index) {
-				TIfHasActiveDestructor<T>::activeDestructor(&value[index]);
-				TIfHasActiveConstructor<T>::activeConstructor(&value[index]);
+				if constexpr (hasActiveHooks) {
+					TIfHasActiveDestructor<T>::activeDestructor(&value[index]);
+					TIfHasActiveConstructor<T>::activeConstructor(&value[index]);
+				} else {
+					value[index] = T();
+				};
+			};
+
+		protected:
+			inline void resetArray(size_t count_) {
+				size_t k;
+				for (k = 0; k < count_; ++k) {
+					value[k] = T();
+				};
 			};
 	};
 

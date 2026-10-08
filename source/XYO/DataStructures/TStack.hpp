@@ -35,7 +35,7 @@ namespace XYO::DataStructures {
 			};
 
 			static inline void initMemory() {
-				TMemory<T>::initMemory();
+				TIfHasInitMemory<T>::initMemory();
 				TXStack::initMemory();
 			};
 
@@ -52,7 +52,14 @@ namespace XYO::DataStructures {
 			inline void push(const T &value) {
 				TNode *node = TXStack::newNode();
 				TIfHasPointerLink<T>::pointerLink(&node->value, this);
-				node->value = const_cast<T &>(value);
+				node->value = value;
+				TXStack::push(head, node);
+			};
+
+			inline void push(T &&value) {
+				TNode *node = TXStack::newNode();
+				TIfHasPointerLink<T>::pointerLink(&node->value, this);
+				node->value = std::move(value);
 				TXStack::push(head, node);
 			};
 
@@ -66,7 +73,7 @@ namespace XYO::DataStructures {
 			inline bool pop(T &value) {
 				TNode *node = TXStack::pop(head);
 				if (node) {
-					value = node->value;
+					value = std::move(node->value);
 					TXStack::deleteNode(node);
 					return true;
 				};
@@ -101,7 +108,7 @@ namespace XYO::DataStructures {
 				empty();
 			};
 
-			inline bool isEmpty() const {
+			[[nodiscard]] inline bool isEmpty() const noexcept {
 				return (head == nullptr);
 			};
 

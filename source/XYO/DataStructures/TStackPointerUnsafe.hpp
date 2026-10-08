@@ -105,8 +105,8 @@ namespace XYO::DataStructures {
 			};
 
 			inline void pop() {
-				TNode *node = TXStack::pop(head);
-				TXStack::deleteNode(node);
+				TNode *node = TXStack::popUnsafe(head);				
+				TXStack::deleteNode(node);				
 			};
 
 			inline void peek(TPointer<T> &value) {

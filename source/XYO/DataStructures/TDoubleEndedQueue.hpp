@@ -61,6 +61,13 @@ namespace XYO::DataStructures {
 				TXList::push(head, tail, node);
 			};
 
+			inline void push(T &&value) {
+				TNode *node = TXList::newNode();
+				TIfHasPointerLink<T>::pointerLink(&node->value, this);
+				node->value = std::move(value);
+				TXList::push(head, tail, node);
+			};
+
 			inline void push(TType *value) {
 				TNode *node = TXList::newNode();
 				TIfHasPointerLink<T>::pointerLink(&node->value, this);
@@ -71,7 +78,7 @@ namespace XYO::DataStructures {
 			inline bool pop(T &value) {
 				TNode *node = TXList::pop(head, tail);
 				if (node) {
-					value = node->value;
+					value = std::move(node->value);
 					TXList::deleteNode(node);
 					return true;
 				};
@@ -120,6 +127,13 @@ namespace XYO::DataStructures {
 				TXList::pushToTail(head, tail, node);
 			};
 
+			inline void pushToTail(T &&value) {
+				TNode *node = TXList::newNode();
+				TIfHasPointerLink<T>::pointerLink(&node->value, this);
+				node->value = std::move(value);
+				TXList::pushToTail(head, tail, node);
+			};
+
 			inline void pushToTail(const TType *value) {
 				TNode *node = TXList::newNode();
 				TIfHasPointerLink<T>::pointerLink(&node->value, this);
@@ -135,6 +149,14 @@ namespace XYO::DataStructures {
 				return node;
 			};
 
+			inline TNode *pushToTailX(T &&value) {
+				TNode *node = TXList::newNode();
+				TIfHasPointerLink<T>::pointerLink(&node->value, this);
+				node->value = std::move(value);
+				TXList::pushToTail(head, tail, node);
+				return node;
+			};
+
 			inline TNode *pushToTailX(const TType *value) {
 				TNode *node = TXList::newNode();
 				TIfHasPointerLink<T>::pointerLink(&node->value, this);
@@ -146,7 +168,7 @@ namespace XYO::DataStructures {
 			inline bool popFromTail(T &value) {
 				TNode *node = TXList::popFromTail(head, tail);
 				if (node) {
-					value = node->value;
+					value = std::move(node->value);
 					TXList::deleteNode(node);
 					return true;
 				};
@@ -196,7 +218,7 @@ namespace XYO::DataStructures {
 				empty();
 			};
 
-			inline bool isEmpty() const {
+			[[nodiscard]] inline bool isEmpty() const noexcept {
 				return (head == nullptr);
 			};
 
