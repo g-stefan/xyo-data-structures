@@ -1,6 +1,5 @@
 {
 	"solution": {
-		"namespace" : "xyo",
 		"name" : "xyo-data-structures",
 		"type" : "xyo-cpp",
 		"projects": [
